@@ -2,9 +2,11 @@
 // // import { useLaunchParams } from "@telegram-apps/sdk-react";
 // import "./App.css";
 
+import { useLaunchParams } from "@telegram-apps/sdk-react";
+
 // export const userParam =
 //   "query_id=AAHdF6IQAAAAAN0XohDhrOrc&user=%7B%22id%22%3A1%2C%22first_name%22%3A%22Test%22%2C%22last_name%22%3A%22Testenko%22%2C%22username%22%3A%22tst%22%2C%22language_code%22%3A%22ru%22%2C%22is_premium%22%3Atrue%7D&auth_date=1662771648&hash=c501b71e775f74ce10e377dea85a7ea24ecd640b223ea86dfe453e0eaed2e2b2";
-// function App() {
+function App() {
 //   const queryParameters = new URLSearchParams(window.location.search);
 //   const tokenRoom = queryParameters.get("token");
 
@@ -36,8 +38,9 @@
 
 //   // const lp = useLaunchParams();
 //   // console.log(JSON.stringify(lp));
+const lp = useLaunchParams();
+console.log(lp)
+  return <div className="App"></div>;
+}
 
-//   return <div className="App"></div>;
-// }
-
-// export default App;
+export default App;
