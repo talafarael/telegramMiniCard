@@ -25,7 +25,6 @@ function App() {
       };
       ws.send(JSON.stringify(message));
 
-      const data = "adada";
     };
     ws.onmessage = async (event) => {
       const res = JSON.parse(event.data);
@@ -34,8 +33,8 @@ function App() {
         case "join": {
           const url = new URL(window.location.href);
           url.searchParams.set("token", res.roomId);
-
           window.history.replaceState({}, "", url.toString());
+         
           break;
         }
       }
