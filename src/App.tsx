@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 // import { useLaunchParams } from "@telegram-apps/sdk-react";
 import "./App.css";
 import { platform } from "os";
+import { start } from "repl";
 export interface IUser {
   session: string;
   hash: string;
@@ -19,13 +20,27 @@ export interface IPlayerPublisher {
   cardCount: number;
   firstName: string | null;
   startGame: boolean;
+  state: string;
+  passState: boolean;
 }
 export interface IYou {
   user: IUser;
   card: ICard[];
   ws: WebSocket;
-  state: boolean;
+  state: string;
   startGameState: boolean;
+  passState: boolean;
+}
+export interface IResponse {
+  session: string;
+  action: string;
+  players: IPlayerPublisher[];
+  roomId: string;
+  you: IYou;
+  cardsOnTable: ICard[][];
+  trump: ICard | null;
+  pass: ICard[];
+  passState: boolean;
 }
 export const userParam =
   "user=%7B%22id%22%3A1056119921%2C%22first_name%22%3A%22farael%22%2C%22last_name%22%3A%22%22%2C%22username%22%3A%22shinerfa%22%2C%22language_code%22%3A%22uk%22%2C%22allows_write_to_pm%22%3Atrue%7D&chat_instance=948078213344090422&chat_type=sender&auth_date=1731334219&hash=d75e77e0a3702152c2845498d621771eedd66724db2a23efeb4d99f0012f3e85";
@@ -34,6 +49,8 @@ function App() {
   const [user, setUser] = useState<string>("");
   const [dataPalyers, setDataPlayers] = useState<IPlayerPublisher[] | []>([]);
   const [dataYou, setDataYou] = useState<IYou>();
+  const [yourCard, setYourCard] = useState<ICard[]>([]);
+  const [startGame, setStartGame] = useState<boolean>(false);
   const wsRef = useRef<WebSocket | null>(null);
   const handlerSelectRolle = (data: string) => {
     setUser(data);
@@ -55,7 +72,7 @@ function App() {
       ws.send(JSON.stringify(message));
     };
     ws.onmessage = async (event) => {
-      const res = JSON.parse(event.data);
+      const res: IResponse = JSON.parse(event.data);
       console.log(res);
       switch (res.action) {
         case "join": {
@@ -64,6 +81,7 @@ function App() {
           window.history.replaceState({}, "", url.toString());
           setDataPlayers(res.players);
           setDataYou(res.you);
+          setYourCard(res.you.card);
           console.log(res);
           break;
         }
@@ -73,7 +91,8 @@ function App() {
           break;
         }
         case "startGame": {
-          console.log(res);
+          setYourCard(res.you.card);
+          setStartGame(true);
           break;
         }
       }
@@ -96,6 +115,18 @@ function App() {
       };
       wsRef.current.send(JSON.stringify(message));
       console.log("Start game message sent:", message);
+    }
+  };
+  const handlerAttack = () => {
+    const queryParameters = new URLSearchParams(window.location.search);
+    const tokenRoom = queryParameters.get("token");
+    if (wsRef.current && dataYou && tokenRoom) {
+      const message = {
+        action: "start",
+        userData: user,
+        roomId: tokenRoom,
+        card:"",
+      };
     }
   };
   // const lp = useLaunchParams();
@@ -126,16 +157,27 @@ function App() {
       {dataPalyers.map((elem) => (
         <div>
           <h1>{elem.firstName}</h1>
+          <p>{elem.state}</p>
           <h1>{elem.startGame ? "ready" : "dont read"}</h1>
         </div>
       ))}
       {dataYou && (
         <div>
           <h1>{dataYou?.user.firstName}</h1>
+          <p>{dataYou?.state}</p>
           <h1>{dataYou?.startGameState ? "ready" : "dont read"}</h1>
           <button onClick={handleStartGame}>start</button>
         </div>
       )}
+
+      <div>
+        {yourCard.map((elem) => (
+          <div>
+            {elem.rank}
+            {elem.suit}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
