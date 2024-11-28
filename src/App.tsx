@@ -127,6 +127,24 @@ function App() {
           setTable(res.cardsOnTable);
           break;
         }
+        case "pass": {
+          setYourCard(res.you.card);
+          setDataYou(res.you);
+          setDataPlayers(res.players);
+          setStartGame(true);
+          setTrump(res.trump);
+          setTable(res.cardsOnTable);
+          break;
+        }
+        case "nextMove": {
+          setYourCard(res.you.card);
+          setDataYou(res.you);
+          setDataPlayers(res.players);
+          setStartGame(true);
+          setTrump(res.trump);
+          setTable(res.cardsOnTable);
+          break;
+        }
       }
     };
     ws.onerror = (error) => {
@@ -181,6 +199,20 @@ function App() {
   };
   // const lp = useLaunchParams();
   // console.log(JSON.stringify(lp));
+  const handlerPass = () => {
+    console.log("AA");
+    const queryParameters = new URLSearchParams(window.location.search);
+    const tokenRoom = queryParameters.get("token");
+
+    if (wsRef.current && dataYou && tokenRoom) {
+      const message = {
+        action: "pass",
+        userData: user,
+        roomId: tokenRoom,
+      };
+      wsRef.current.send(JSON.stringify(message));
+    }
+  };
   const handlerAdd = (card: ICard) => {
     console.log("AA");
     const queryParameters = new URLSearchParams(window.location.search);
@@ -268,6 +300,7 @@ function App() {
           </div>
         ))}
       </div>
+      <button onClick={handlerPass}>ff</button>
     </div>
   );
 }
