@@ -37,10 +37,14 @@ export interface IResponse {
   players: IPlayerPublisher[];
   roomId: string;
   you: IYou;
-  cardsOnTable: ICard[][];
+  cardsOnTable: ITable[];
   trump: ICard | null;
   pass: ICard[];
   passState: boolean;
+}
+export interface ITable {
+  attack: ICard;
+  deffit: ICard | null;
 }
 export const userParam =
   "user=%7B%22id%22%3A1056119921%2C%22first_name%22%3A%22farael%22%2C%22last_name%22%3A%22%22%2C%22username%22%3A%22shinerfa%22%2C%22language_code%22%3A%22uk%22%2C%22allows_write_to_pm%22%3Atrue%7D&chat_instance=948078213344090422&chat_type=sender&auth_date=1731334219&hash=d75e77e0a3702152c2845498d621771eedd66724db2a23efeb4d99f0012f3e85";
@@ -50,7 +54,9 @@ function App() {
   const [dataPalyers, setDataPlayers] = useState<IPlayerPublisher[] | []>([]);
   const [dataYou, setDataYou] = useState<IYou>();
   const [yourCard, setYourCard] = useState<ICard[]>([]);
+  const [trump, setTrump] = useState<ICard | null>();
   const [startGame, setStartGame] = useState<boolean>(false);
+  const [table, setTable] = useState<ITable[] | null>();
   const wsRef = useRef<WebSocket | null>(null);
   const handlerSelectRolle = (data: string) => {
     setUser(data);
@@ -82,17 +88,43 @@ function App() {
           setDataPlayers(res.players);
           setDataYou(res.you);
           setYourCard(res.you.card);
-          console.log(res);
+          setTrump(res.trump);
+          setTable(res.cardsOnTable);
           break;
         }
         case "UserReady": {
+          setYourCard(res.you.card);
           setDataPlayers(res.players);
           setDataYou(res.you);
+          setTrump(res.trump);
+          setTable(res.cardsOnTable);
           break;
         }
         case "startGame": {
           setYourCard(res.you.card);
+          setDataYou(res.you);
+          setDataPlayers(res.players);
           setStartGame(true);
+          setTrump(res.trump);
+          setTable(res.cardsOnTable);
+          break;
+        }
+        case "attack": {
+          setYourCard(res.you.card);
+          setDataYou(res.you);
+          setDataPlayers(res.players);
+          setStartGame(true);
+          setTrump(res.trump);
+          setTable(res.cardsOnTable);
+          break;
+        }
+        case "def": {
+          setYourCard(res.you.card);
+          setDataYou(res.you);
+          setDataPlayers(res.players);
+          setStartGame(true);
+          setTrump(res.trump);
+          setTable(res.cardsOnTable);
           break;
         }
       }
@@ -114,24 +146,56 @@ function App() {
         roomId: tokenRoom,
       };
       wsRef.current.send(JSON.stringify(message));
-      console.log("Start game message sent:", message);
     }
   };
-  const handlerAttack = () => {
+  const handlerAttack = (card: ICard) => {
+    console.log("AA");
     const queryParameters = new URLSearchParams(window.location.search);
     const tokenRoom = queryParameters.get("token");
+
     if (wsRef.current && dataYou && tokenRoom) {
       const message = {
-        action: "start",
+        action: "attack",
         userData: user,
         roomId: tokenRoom,
-        card:"",
+        card: card,
       };
+      wsRef.current.send(JSON.stringify(message));
+    }
+  };
+  const handlerDeff = (card: ICard) => {
+    const index = prompt("aaa");
+    console.log(index);
+    const queryParameters = new URLSearchParams(window.location.search);
+    const tokenRoom = queryParameters.get("token");
+    if (wsRef.current && dataYou && tokenRoom && table) {
+      const message = {
+        action: "deff",
+        userData: user,
+        roomId: tokenRoom,
+        card: card,
+        attacCard: table[Number(index) - 1].attack,
+      };
+      wsRef.current.send(JSON.stringify(message));
     }
   };
   // const lp = useLaunchParams();
   // console.log(JSON.stringify(lp));
+  const handlerAdd = (card: ICard) => {
+    console.log("AA");
+    const queryParameters = new URLSearchParams(window.location.search);
+    const tokenRoom = queryParameters.get("token");
 
+    if (wsRef.current && dataYou && tokenRoom) {
+      const message = {
+        action: "add",
+        userData: user,
+        roomId: tokenRoom,
+        card: card,
+      };
+      wsRef.current.send(JSON.stringify(message));
+    }
+  };
   return (
     <div className="App">
       <button
@@ -164,7 +228,7 @@ function App() {
       {dataYou && (
         <div>
           <h1>{dataYou?.user.firstName}</h1>
-          <p>{dataYou?.state}</p>
+          <p>{dataYou.state}</p>
           <h1>{dataYou?.startGameState ? "ready" : "dont read"}</h1>
           <button onClick={handleStartGame}>start</button>
         </div>
@@ -172,9 +236,35 @@ function App() {
 
       <div>
         {yourCard.map((elem) => (
-          <div>
+          <div
+            onClick={() => {
+              dataYou?.state == "defending"
+                ? handlerDeff(elem)
+                : table?.length == 0
+                ? dataYou?.state == "attacking" && handlerAttack(elem)
+                : handlerAdd(elem);
+            }}
+          >
             {elem.rank}
             {elem.suit}
+          </div>
+        ))}
+      </div>
+      <div>
+        козырь
+        <h1>{trump?.rank}</h1>
+        <h1>{trump?.suit}</h1>
+      </div>
+      <div>
+        стол
+        {table?.map((elem) => (
+          <div className="background">
+            <h1>attack</h1>
+            <h1>{elem.attack.rank}</h1>
+            <h1>{elem.attack.suit}</h1>
+            <h1>def</h1>
+            <h1>{elem?.deffit?.rank}</h1>
+            <h1>{elem?.deffit?.suit}</h1>
           </div>
         ))}
       </div>
