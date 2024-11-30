@@ -52,6 +52,7 @@ export const userParam =
 function App() {
   const [user, setUser] = useState<string>("");
   const [dataPalyers, setDataPlayers] = useState<IPlayerPublisher[] | []>([]);
+  const [currentCard, setCurrentCard] = useState<ICard>();
   const [dataYou, setDataYou] = useState<IYou>();
   const [yourCard, setYourCard] = useState<ICard[]>([]);
   const [trump, setTrump] = useState<ICard | null>();
@@ -181,9 +182,7 @@ function App() {
       wsRef.current.send(JSON.stringify(message));
     }
   };
-  const handlerDeff = (card: ICard) => {
-    const index = prompt("aaa");
-    console.log(index);
+  const handlerDeff = (card: ICard, attacCard: ICard) => {
     const queryParameters = new URLSearchParams(window.location.search);
     const tokenRoom = queryParameters.get("token");
     if (wsRef.current && dataYou && tokenRoom && table) {
@@ -192,7 +191,7 @@ function App() {
         userData: user,
         roomId: tokenRoom,
         card: card,
-        attacCard: table[Number(index) - 1].attack,
+        attacCard: attacCard,
       };
       wsRef.current.send(JSON.stringify(message));
     }
@@ -213,6 +212,19 @@ function App() {
       wsRef.current.send(JSON.stringify(message));
     }
   };
+
+  const dragEndHandler = (e: React.DragEvent) => {};
+  const dragOverHandler = (e: React.DragEvent) => {
+    e.preventDefault();
+  };
+
+  const dropHandler = (e: React.DragEvent, card: any) => {};
+  // Дропаем карту
+
+  // Разрешаем сброс
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+  };
   const handlerAdd = (card: ICard) => {
     console.log("AA");
     const queryParameters = new URLSearchParams(window.location.search);
@@ -227,6 +239,27 @@ function App() {
       };
       wsRef.current.send(JSON.stringify(message));
     }
+  };
+  const handleDrop = (e: React.DragEvent, elem: ICard) => {
+    console.log(elem);
+    if (!currentCard) {
+      return;
+    }
+    if (dataYou?.state == "defending") {
+      handlerDeff(currentCard, elem);
+    }
+    if (table?.length == 0 && dataYou?.state == "attacking") {
+      // console.log("aaa")
+      handlerAttack(currentCard);
+    }
+    handlerAdd(currentCard);
+    // : table?.length == 0
+    // ? dataYou?.state == "attacking" && handlerAttack(elem)
+    // : handlerAdd(elem);
+  };
+  const dragStartHandler = (e: React.DragEvent, card: ICard) => {
+    //start
+    setCurrentCard(card);
   };
   return (
     <div className="App">
@@ -269,13 +302,17 @@ function App() {
       <div>
         {yourCard.map((elem) => (
           <div
-            onClick={() => {
-              dataYou?.state == "defending"
-                ? handlerDeff(elem)
-                : table?.length == 0
-                ? dataYou?.state == "attacking" && handlerAttack(elem)
-                : handlerAdd(elem);
-            }}
+            draggable={true}
+            onDragStart={(e) => dragStartHandler(e, elem)}
+            onDragEnd={(e) => dragEndHandler(e)}
+
+            // onClick={() => {
+            //   dataYou?.state == "defending"
+            //     ? handlerDeff(elem)
+            //     : table?.length == 0
+            //     ? dataYou?.state == "attacking" && handlerAttack(elem)
+            //     : handlerAdd(elem);
+            // }}
           >
             {elem.rank}
             {elem.suit}
@@ -289,9 +326,18 @@ function App() {
       </div>
       <div>
         стол
-        {table?.map((elem) => (
-          <div className="background">
+        {table?.map((elem, index) => (
+          <div
+            key={`${elem.attack.rank}-${elem.attack.suit}`}
+            className="background"
+            onDragOver={(e) => dragOverHandler(e)}
+            onDrop={(e) => {
+              console.log("aa");
+              handleDrop(e, elem.attack);
+            }}
+          >
             <h1>attack</h1>
+
             <h1>{elem.attack.rank}</h1>
             <h1>{elem.attack.suit}</h1>
             <h1>def</h1>
