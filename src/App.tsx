@@ -257,6 +257,16 @@ function App() {
     // ? dataYou?.state == "attacking" && handlerAttack(elem)
     // : handlerAdd(elem);
   };
+  const handleDropTable = (e: React.DragEvent) => {
+    if (!currentCard) {
+      return;
+    }
+    if (table?.length == 0 && dataYou?.state == "attacking") {
+      // console.log("aaa")
+      handlerAttack(currentCard);
+    }
+    handlerAdd(currentCard);
+  };
   const dragStartHandler = (e: React.DragEvent, card: ICard) => {
     //start
     setCurrentCard(card);
@@ -283,39 +293,71 @@ function App() {
         user2
       </button>
 
-      {dataPalyers.map((elem) => (
-        <div>
-          <h1>{elem.firstName}</h1>
-          <p>{elem.state}</p>
-          <h1>{elem.startGame ? "ready" : "dont read"}</h1>
-        </div>
-      ))}
-      {dataYou && (
+      <div>
+        {dataPalyers.map((elem) => (
+          <div>
+            <h1>{elem.firstName}</h1>
+            <p>{elem.state}</p>
+            <h1>{elem.startGame ? "ready" : "dont read"}</h1>
+          </div>
+        ))}
+      </div>
+      {/* {dataYou && (
         <div>
           <h1>{dataYou?.user.firstName}</h1>
           <p>{dataYou.state}</p>
           <h1>{dataYou?.startGameState ? "ready" : "dont read"}</h1>
           <button onClick={handleStartGame}>start</button>
         </div>
-      )}
-
-      <div>
+      )} */}
+      <div
+        onDragOver={(e) => dragOverHandler(e)}
+        onDrop={(e) => {
+          console.log("aa");
+          handleDropTable(e);
+        }}
+        className="table"
+      >
+        {table?.map((elem, index) => (
+          <div
+            key={`${elem.attack.rank}-${elem.attack.suit}`}
+            onDragOver={(e) => dragOverHandler(e)}
+            onDrop={(e) => {
+              handleDrop(e, elem.attack);
+            }}
+            className="tableCell"
+          >
+            <img
+              className="cardOnTableAttack"
+              src={`/${elem.attack.suit}/${
+                elem.attack.rank + elem.attack.suit
+              }.svg`}
+              alt=""
+            />
+            {elem.deffit && (
+              <img
+                className="cardOnTableDeffit"
+                src={`/${elem.deffit.suit}/${
+                  elem.deffit.rank + elem.deffit.suit
+                }.svg`}
+                alt=""
+              />
+            )}
+          </div>
+        ))}
+      </div>
+      <div className="containerCard">
         {yourCard.map((elem) => (
           <div
             draggable={true}
             onDragStart={(e) => dragStartHandler(e, elem)}
             onDragEnd={(e) => dragEndHandler(e)}
-
-            // onClick={() => {
-            //   dataYou?.state == "defending"
-            //     ? handlerDeff(elem)
-            //     : table?.length == 0
-            //     ? dataYou?.state == "attacking" && handlerAttack(elem)
-            //     : handlerAdd(elem);
-            // }}
           >
-            {elem.rank}
-            {elem.suit}
+            <img
+              className="yourCard"
+              src={`/${elem.suit}/${elem.rank + elem.suit}.svg`}
+              alt=""
+            />
           </div>
         ))}
       </div>
@@ -324,28 +366,7 @@ function App() {
         <h1>{trump?.rank}</h1>
         <h1>{trump?.suit}</h1>
       </div>
-      <div>
-        стол
-        {table?.map((elem, index) => (
-          <div
-            key={`${elem.attack.rank}-${elem.attack.suit}`}
-            className="background"
-            onDragOver={(e) => dragOverHandler(e)}
-            onDrop={(e) => {
-              console.log("aa");
-              handleDrop(e, elem.attack);
-            }}
-          >
-            <h1>attack</h1>
 
-            <h1>{elem.attack.rank}</h1>
-            <h1>{elem.attack.suit}</h1>
-            <h1>def</h1>
-            <h1>{elem?.deffit?.rank}</h1>
-            <h1>{elem?.deffit?.suit}</h1>
-          </div>
-        ))}
-      </div>
       <button onClick={handlerPass}>ff</button>
     </div>
   );

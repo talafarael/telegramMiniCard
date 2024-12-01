@@ -1,0 +1,30 @@
+.yourCard {
+  height: 200px;
+  width: 140px;
+}
+.containerCard {
+  display: flex;
+}
+.cardOnTableAttack {
+  width: 90px;
+  height: 125px;
+}
+.tableCell {
+  position: relative;
+}
+.cardOnTableDeffit {
+  transition: transform 0.3s ease;
+  transform: rotate(20deg);
+  left: 40px;
+  z-index: 1;
+  position: absolute;
+  width: 90px;
+  height: 125px;
+}
+.table{
+    display: flex;
+    flex-wrap: wrap;
+    width: 300px;
+    height: 220px;
+}
+/* .cardOnTableDeffit ::hover */
