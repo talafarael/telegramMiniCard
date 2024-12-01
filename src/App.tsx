@@ -53,6 +53,7 @@ function App() {
   const [user, setUser] = useState<string>("");
   const [dataPalyers, setDataPlayers] = useState<IPlayerPublisher[] | []>([]);
   const [currentCard, setCurrentCard] = useState<ICard>();
+  const [count, setCount] = useState<number>(0);
   const [dataYou, setDataYou] = useState<IYou>();
   const [yourCard, setYourCard] = useState<ICard[]>([]);
   const [trump, setTrump] = useState<ICard | null>();
@@ -146,6 +147,15 @@ function App() {
           setTable(res.cardsOnTable);
           break;
         }
+        case "grab": {
+          setYourCard(res.you.card);
+          setDataYou(res.you);
+          setDataPlayers(res.players);
+          setStartGame(true);
+          setTrump(res.trump);
+          setTable(res.cardsOnTable);
+          break;
+        }
       }
     };
     ws.onerror = (error) => {
@@ -212,7 +222,19 @@ function App() {
       wsRef.current.send(JSON.stringify(message));
     }
   };
+  const handlerGab = () => {
+    const queryParameters = new URLSearchParams(window.location.search);
+    const tokenRoom = queryParameters.get("token");
 
+    if (wsRef.current && dataYou && tokenRoom) {
+      const message = {
+        action: "grab",
+        userData: user,
+        roomId: tokenRoom,
+      };
+      wsRef.current.send(JSON.stringify(message));
+    }
+  };
   const dragEndHandler = (e: React.DragEvent) => {};
   const dragOverHandler = (e: React.DragEvent) => {
     e.preventDefault();
@@ -273,101 +295,120 @@ function App() {
   };
   return (
     <div className="App">
-      <button
-        onClick={() => {
-          handlerSelectRolle(
-            "AAHdF6IQAAAAAN0XohDhrOrc&user=%7B%22id%22%3A1%2C%22first_name%22%3A%22Test%22%2C%22last_name%22%3A%22Testenko%22%2C%22username%22%3A%22tst%22%2C%22language_code%22%3A%22ru%22%2C%22is_premium%22%3Atrue%7D&auth_date=1662771648&hash=c501b71e775f74ce10e377dea85a7ea24ecd640b223ea86dfe453e0eaed2e2b2"
-          );
-        }}
-      >
-        user1
-      </button>
+      <header>
+        <button
+          onClick={() => {
+            handlerSelectRolle(
+              "AAHdF6IQAAAAAN0XohDhrOrc&user=%7B%22id%22%3A1%2C%22first_name%22%3A%22Test%22%2C%22last_name%22%3A%22Testenko%22%2C%22username%22%3A%22tst%22%2C%22language_code%22%3A%22ru%22%2C%22is_premium%22%3Atrue%7D&auth_date=1662771648&hash=c501b71e775f74ce10e377dea85a7ea24ecd640b223ea86dfe453e0eaed2e2b2"
+            );
+          }}
+        >
+          user1
+        </button>
 
-      <button
-        onClick={() => {
-          handlerSelectRolle(
-            "user=%7B%22id%22%3A1056119921%2C%22first_name%22%3A%22farael%22%2C%22last_name%22%3A%22%22%2C%22username%22%3A%22shinerfa%22%2C%22language_code%22%3A%22uk%22%2C%22allows_write_to_pm%22%3Atrue%7D&chat_instance=948078213344090422&chat_type=sender&auth_date=1731334219&hash=d75e77e0a3702152c2845498d621771eedd66724db2a23efeb4d99f0012f3e85"
-          );
-        }}
-      >
-        user2
-      </button>
-
-      <div>
-        {dataPalyers.map((elem) => (
-          <div>
-            <h1>{elem.firstName}</h1>
-            <p>{elem.state}</p>
-            <h1>{elem.startGame ? "ready" : "dont read"}</h1>
+        <button
+          onClick={() => {
+            handlerSelectRolle(
+              "user=%7B%22id%22%3A1056119921%2C%22first_name%22%3A%22farael%22%2C%22last_name%22%3A%22%22%2C%22username%22%3A%22shinerfa%22%2C%22language_code%22%3A%22uk%22%2C%22allows_write_to_pm%22%3Atrue%7D&chat_instance=948078213344090422&chat_type=sender&auth_date=1731334219&hash=d75e77e0a3702152c2845498d621771eedd66724db2a23efeb4d99f0012f3e85"
+            );
+          }}
+        >
+          user2
+        </button>
+      </header>
+      <section className="gameSection">
+        <article className="gameTopBoard">
+          <div className="yourOpponents">
+            {dataPalyers.map((elem) => (
+              <div className="Opponent">
+                <h1>{elem.firstName}</h1>
+                <p>{elem.state}</p>
+                <h1>{elem.startGame ? "ready" : "dont read"}</h1>
+                <p>pass{elem.passState ? "pass" : "dont pass"}</p>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
-      {/* {dataYou && (
-        <div>
-          <h1>{dataYou?.user.firstName}</h1>
-          <p>{dataYou.state}</p>
-          <h1>{dataYou?.startGameState ? "ready" : "dont read"}</h1>
-          <button onClick={handleStartGame}>start</button>
-        </div>
-      )} */}
-      <div
-        onDragOver={(e) => dragOverHandler(e)}
-        onDrop={(e) => {
-          console.log("aa");
-          handleDropTable(e);
-        }}
-        className="table"
-      >
-        {table?.map((elem, index) => (
           <div
-            key={`${elem.attack.rank}-${elem.attack.suit}`}
             onDragOver={(e) => dragOverHandler(e)}
             onDrop={(e) => {
-              handleDrop(e, elem.attack);
+              console.log("aa");
+              handleDropTable(e);
             }}
-            className="tableCell"
+            className="table"
           >
-            <img
-              className="cardOnTableAttack"
-              src={`/${elem.attack.suit}/${
-                elem.attack.rank + elem.attack.suit
-              }.svg`}
-              alt=""
-            />
-            {elem.deffit && (
+            <div>
+              {trump ? (
+                <img
+                  className="trump"
+                  src={`/${trump.suit}/${trump.rank + trump.suit}.svg`}
+                  alt=""
+                />
+              ) : null}
+            </div>
+            {table?.map((elem, index) => (
+              <div
+                key={`${elem.attack.rank}-${elem.attack.suit}`}
+                onDragOver={(e) => dragOverHandler(e)}
+                onDrop={(e) => {
+                  handleDrop(e, elem.attack);
+                }}
+                className="tableCell"
+              >
+                <img
+                  className="cardOnTableAttack"
+                  src={`/${elem.attack.suit}/${
+                    elem.attack.rank + elem.attack.suit
+                  }.svg`}
+                  alt=""
+                />
+                {elem.deffit && (
+                  <img
+                    className="cardOnTableDeffit"
+                    src={`/${elem.deffit.suit}/${
+                      elem.deffit.rank + elem.deffit.suit
+                    }.svg`}
+                    alt=""
+                  />
+                )}
+              </div>
+            ))}
+          </div>
+        </article>
+
+        <article className="gameBottom">
+          {yourCard.map((elem, key) => {
+            return (
               <img
-                className="cardOnTableDeffit"
-                src={`/${elem.deffit.suit}/${
-                  elem.deffit.rank + elem.deffit.suit
-                }.svg`}
+                draggable={true}
+                onDragStart={(e) => dragStartHandler(e, elem)}
+                onDragEnd={(e) => dragEndHandler(e)}
+                className={
+                  key < yourCard.length / 2
+                    ? "yourBeforeCard yourCard"
+                    : "yourCardAfter yourCard"
+                }
+                src={`/${elem.suit}/${elem.rank + elem.suit}.svg`}
                 alt=""
               />
+            );
+          })}
+          <section className="sectionYou">
+            {dataYou && (
+              <div>
+                <h1>{dataYou?.user.firstName}</h1>
+                <p>{dataYou.state}</p>
+                <h1>{dataYou?.startGameState ? "ready" : "dont read"}</h1>
+                <p>pass: {dataYou?.passState ? "pass" : "dont pass"}</p>
+              </div>
             )}
-          </div>
-        ))}
-      </div>
-      <div className="containerCard">
-        {yourCard.map((elem) => (
-          <div
-            draggable={true}
-            onDragStart={(e) => dragStartHandler(e, elem)}
-            onDragEnd={(e) => dragEndHandler(e)}
-          >
-            <img
-              className="yourCard"
-              src={`/${elem.suit}/${elem.rank + elem.suit}.svg`}
-              alt=""
-            />
-          </div>
-        ))}
-      </div>
-      <div>
-        козырь
-        <h1>{trump?.rank}</h1>
-        <h1>{trump?.suit}</h1>
-      </div>
-
-      <button onClick={handlerPass}>ff</button>
+            <article>
+              <button onClick={handleStartGame}>start</button>
+              <button onClick={handlerPass}>skip</button>
+              <button onClick={handlerGab}>grab</button>
+            </article>
+          </section>
+        </article>
+      </section>
     </div>
   );
 }

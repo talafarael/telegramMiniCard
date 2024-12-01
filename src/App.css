@@ -1,6 +1,27 @@
 .yourCard {
-  height: 200px;
-  width: 140px;
+  width: 130px;
+  height: 160px;
+}
+* {
+  margin: 0px;
+  padding: 0px;
+}
+.App {
+  overflow-y: hidden;
+  overflow-x: hidden;
+}
+.yourCardAfter {
+  margin-left: -100px;
+  transform: rotate(10deg);
+}
+.yourBeforeCard {
+  margin-left: -100px;
+  transform: rotate(-10deg);
+}
+.yourMidCard {
+  /* transform: rotate(10deg); */
+  width: 90px;
+  height: 125px;
 }
 .containerCard {
   display: flex;
@@ -21,10 +42,69 @@
   width: 90px;
   height: 125px;
 }
-.table{
-    display: flex;
-    flex-wrap: wrap;
-    width: 300px;
-    height: 220px;
+.gameSection {
+  height: 95vh;
+  background: #000000;
+  width: 428px;
+}
+.gameTopBoard {
+  height: 60vh;
+  width: 100vw;
+}
+.gameBottom {
+  padding-left:45px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 30vh;
+  width: 100vw;
+  background: red;
+}
+
+.yourCardAfter,
+.yourBeforeCard,
+.yourMidCard {
+  position: relative;
+}
+.table {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  width: 100vw;
+  height: 300px;
+  align-items: center;
+
+  justify-content: center;
+}
+.sectionYou {
+  width: 100%;
+  height: 60%;
+  position: absolute;
+  background: #171717;
+  left: 0px;
+  top: 60%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 /* .cardOnTableDeffit ::hover */
+.trump {
+  left: -30px;
+  position: absolute;
+  width: 60px;
+  transform: rotate(45deg);
+  height: 84px;
+}
+header {
+  height: 5vh;
+}
+.yourOpponents {
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+.Opponent {
+  background: red;
+}
