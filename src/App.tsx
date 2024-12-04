@@ -73,7 +73,7 @@ function App() {
       if (launchParams?.initDataRaw) {
         setUser(launchParams.initDataRaw);
         const params = new URLSearchParams(window.location.search);
-        const tokenValue = params.get("token");
+        const tokenValue = params.get("initData");
         console.log(tokenValue);
       }
     }
