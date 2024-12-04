@@ -72,10 +72,14 @@ function App() {
       const launchParams = retrieveLaunchParams();
       if (launchParams?.initDataRaw) {
         setUser(launchParams.initDataRaw);
+        const params = new URLSearchParams(window.location.search);
+        const tokenValue = params.get("token");
+        console.log(tokenValue);
       }
     }
   });
-  useEffect(() => {
+  //t.me/@CardFaraBot
+  https: useEffect(() => {
     if (user == "") return;
     const port = "wss://cardbec.onrender.com";
     const ws = new WebSocket(port);
