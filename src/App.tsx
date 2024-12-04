@@ -65,7 +65,7 @@ function App() {
   };
   useEffect(() => {
     if (user == "") return;
-    const port = "ws://localhost:8080/";
+    const port = "wss://cardbec.onrender.com/";
     const ws = new WebSocket(port);
     // const lp = useLaunchParams();
     wsRef.current = ws;
