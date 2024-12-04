@@ -3,7 +3,10 @@ import React, { useEffect, useRef, useState } from "react";
 import "./App.css";
 import { platform } from "os";
 import { start } from "repl";
-import { retrieveLaunchParams, useLaunchParams } from "@telegram-apps/sdk-react";
+import {
+  retrieveLaunchParams,
+  useLaunchParams,
+} from "@telegram-apps/sdk-react";
 export interface IUser {
   session: string;
   hash: string;
@@ -71,6 +74,7 @@ function App() {
   const handlerSelectRolle = (data: string) => {
     setUser(data);
   };
+  const lp = useLaunchParams();
   useEffect(() => {
     console.log("aa");
     if (
@@ -81,7 +85,7 @@ function App() {
       const launchParams = retrieveLaunchParams();
       if (launchParams?.initDataRaw) {
         setUser(launchParams.initDataRaw);
-        const lp = useLaunchParams();
+
         console.log(lp)
       }
     }
