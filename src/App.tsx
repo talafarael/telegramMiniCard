@@ -395,7 +395,7 @@ function App() {
             );
           })}
           <section className="sectionYou"> 
-            <article>
+        
               <button
                 onClick={() => {
                   handlerStartGame();
@@ -404,9 +404,9 @@ function App() {
               >
                 start
               </button>
-              <button onClick={handlerPass}>skip</button>
-              <button onClick={handlerGab}>grab</button>
-            </article>
+              
+           
+             <button onClick={handlerPass}>skip</button>  <button onClick={handlerGab}>grab</button>
             {dataYou && (
               <div>
                 <h1>{dataYou?.user.firstName}</h1>
