@@ -168,7 +168,9 @@ function App() {
   const handleStartGame = () => {
     const queryParameters = new URLSearchParams(window.location.search);
     const tokenRoom = queryParameters.get("token");
+    console.log("AA")
     if (wsRef.current && dataYou && tokenRoom) {
+      console.log("suak")
       const message = {
         action: "start",
         userData: user,
