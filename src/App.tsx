@@ -168,9 +168,9 @@ function App() {
   const handlerStartGame = () => {
     const queryParameters = new URLSearchParams(window.location.search);
     const tokenRoom = queryParameters.get("token");
-    console.log("AA")
+    console.log("AA");
     if (wsRef.current && dataYou && tokenRoom) {
-      console.log("suak")
+      console.log("suak");
       const message = {
         action: "start",
         userData: user,
@@ -403,10 +403,16 @@ function App() {
                 <p>pass: {dataYou?.passState ? "pass" : "dont pass"}</p>
               </div>
             )}
+            {/* ddddddddd */}
             <article>
-              <button onClick={()=>{handlerStartGame()
-                console.log("Suk")
-              }}>start</button>
+              <button
+                onClick={() => {
+                  handlerStartGame();
+                  console.log("Suk");
+                }}
+              >
+                start
+              </button>
               <button onClick={handlerPass}>skip</button>
               <button onClick={handlerGab}>grab</button>
             </article>
