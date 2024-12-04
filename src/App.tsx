@@ -81,11 +81,11 @@ function App() {
       const launchParams = retrieveLaunchParams();
       if (launchParams?.initDataRaw) {
         setUser(launchParams.initDataRaw);
-        const params = new URLSearchParams(window.location.search);
-        const tokenValue = params.get("initData");
-        console.log(tokenValue);
         const initData = window.Telegram.WebApp.initData;
-        console.log(initData);
+        // Раскодируйте параметры initData, если нужно
+        const urlParams = new URLSearchParams(initData);
+        const uuid = urlParams.get('uuid');
+        console.log(uuid); 
       }
     }
   });
