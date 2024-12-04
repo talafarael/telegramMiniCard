@@ -65,10 +65,12 @@ function App() {
     setUser(data);
   };
   useEffect(() => {
+    console.log("aa")
     if (
       typeof window !== "undefined" &&
       window.location.href.includes("tgWebAppData")
     ) {
+      console.log("fuck")
       const launchParams = retrieveLaunchParams();
       if (launchParams?.initDataRaw) {
         setUser(launchParams.initDataRaw);
