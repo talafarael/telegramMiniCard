@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import "./App.css";
 import { platform } from "os";
 import { start } from "repl";
-import { retrieveLaunchParams } from "@telegram-apps/sdk-react";
+import { retrieveLaunchParams, useLaunchParams } from "@telegram-apps/sdk-react";
 export interface IUser {
   session: string;
   hash: string;
@@ -81,11 +81,8 @@ function App() {
       const launchParams = retrieveLaunchParams();
       if (launchParams?.initDataRaw) {
         setUser(launchParams.initDataRaw);
-        const initData = window.Telegram.WebApp.initData;
-        // Раскодируйте параметры initData, если нужно
-        const urlParams = new URLSearchParams(initData);
-        const uuid = urlParams.get('uuid');
-        console.log(uuid); 
+        const lp = useLaunchParams();
+        console.log(lp)
       }
     }
   });
