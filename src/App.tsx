@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import "./App.css";
 import { platform } from "os";
 import { start } from "repl";
+import { retrieveLaunchParams } from "@telegram-apps/sdk-react";
 export interface IUser {
   session: string;
   hash: string;
@@ -64,8 +65,19 @@ function App() {
     setUser(data);
   };
   useEffect(() => {
+    if (
+      typeof window !== "undefined" &&
+      window.location.href.includes("tgWebAppData")
+    ) {
+      const launchParams = retrieveLaunchParams();
+      if (launchParams?.initDataRaw) {
+        setUser(launchParams.initDataRaw);
+      }
+    }
+  });
+  useEffect(() => {
     if (user == "") return;
-    const port = "ws://localhost:8080/";
+    const port = "wss://cardbec.onrender.com";
     const ws = new WebSocket(port);
     // const lp = useLaunchParams();
     wsRef.current = ws;
