@@ -84,7 +84,7 @@ function App() {
         const params = new URLSearchParams(window.location.search);
         const tokenValue = params.get("initData");
         console.log(tokenValue);
-        const initData = window.Telegram.WebApp.toke;
+        const initData = window.Telegram.WebApp.initData;
         console.log(initData);
       }
     }
