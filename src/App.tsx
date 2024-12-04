@@ -87,7 +87,7 @@ function App() {
       if (launchParams?.initDataRaw) {
         setUser(launchParams.initDataRaw);
 
-        console.log(lp)
+        console.log(lp.startParam)
       }
     }
   });
@@ -99,8 +99,8 @@ function App() {
     // const lp = useLaunchParams();
     wsRef.current = ws;
     ws.onopen = () => {
-      const queryParameters = new URLSearchParams(window.location.search);
-      const tokenRoom = queryParameters.get("token");
+      // const queryParameters = new URLSearchParams(window.location.search);
+      const tokenRoom = lp.startParam
       const message = {
         action: "join",
         roomId: tokenRoom ? tokenRoom : undefined,
@@ -196,7 +196,7 @@ function App() {
   }, [user]);
   const handleStartGame = () => {
     const queryParameters = new URLSearchParams(window.location.search);
-    const tokenRoom = queryParameters.get("token");
+    const tokenRoom = lp.startParam
     if (wsRef.current && dataYou && tokenRoom) {
       const message = {
         action: "start",
@@ -209,7 +209,7 @@ function App() {
   const handlerAttack = (card: ICard) => {
     console.log("AA");
     const queryParameters = new URLSearchParams(window.location.search);
-    const tokenRoom = queryParameters.get("token");
+    const tokenRoom = lp.startParam
 
     if (wsRef.current && dataYou && tokenRoom) {
       const message = {
@@ -223,7 +223,7 @@ function App() {
   };
   const handlerDeff = (card: ICard, attacCard: ICard) => {
     const queryParameters = new URLSearchParams(window.location.search);
-    const tokenRoom = queryParameters.get("token");
+    const tokenRoom = lp.startParam
     if (wsRef.current && dataYou && tokenRoom && table) {
       const message = {
         action: "deff",
@@ -240,7 +240,7 @@ function App() {
   const handlerPass = () => {
     console.log("AA");
     const queryParameters = new URLSearchParams(window.location.search);
-    const tokenRoom = queryParameters.get("token");
+    const tokenRoom = lp.startParam
 
     if (wsRef.current && dataYou && tokenRoom) {
       const message = {
@@ -253,7 +253,7 @@ function App() {
   };
   const handlerGab = () => {
     const queryParameters = new URLSearchParams(window.location.search);
-    const tokenRoom = queryParameters.get("token");
+    const tokenRoom =lp.startParam
 
     if (wsRef.current && dataYou && tokenRoom) {
       const message = {
@@ -279,7 +279,7 @@ function App() {
   const handlerAdd = (card: ICard) => {
     console.log("AA");
     const queryParameters = new URLSearchParams(window.location.search);
-    const tokenRoom = queryParameters.get("token");
+    const tokenRoom =lp.startParam
 
     if (wsRef.current && dataYou && tokenRoom) {
       const message = {
