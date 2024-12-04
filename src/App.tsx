@@ -394,16 +394,7 @@ function App() {
               />
             );
           })}
-          <section className="sectionYou">
-            {dataYou && (
-              <div>
-                <h1>{dataYou?.user.firstName}</h1>
-                <p>{dataYou.state}</p>
-                <h1>{dataYou?.startGameState ? "ready" : "dont read"}</h1>
-                <p>pass: {dataYou?.passState ? "pass" : "dont pass"}</p>
-              </div>
-            )}
-            {/* ddddddddd */}
+          <section className="sectionYou"> 
             <article>
               <button
                 onClick={() => {
@@ -416,6 +407,16 @@ function App() {
               <button onClick={handlerPass}>skip</button>
               <button onClick={handlerGab}>grab</button>
             </article>
+            {dataYou && (
+              <div>
+                <h1>{dataYou?.user.firstName}</h1>
+                <p>{dataYou.state}</p>
+                <h1>{dataYou?.startGameState ? "ready" : "dont read"}</h1>
+                <p>pass: {dataYou?.passState ? "pass" : "dont pass"}</p>
+              </div>
+            )}
+            {/* ddddddddd */}
+           
           </section>
         </article>
       </section>
