@@ -165,7 +165,7 @@ function App() {
       ws.close();
     };
   }, [user]);
-  const handleStartGame = () => {
+  const handlerStartGame = () => {
     const queryParameters = new URLSearchParams(window.location.search);
     const tokenRoom = queryParameters.get("token");
     console.log("AA")
@@ -404,7 +404,9 @@ function App() {
               </div>
             )}
             <article>
-              <button onClick={handleStartGame}>start</button>
+              <button onClick={()=>{handlerStartGame()
+                console.log("Suk")
+              }}>start</button>
               <button onClick={handlerPass}>skip</button>
               <button onClick={handlerGab}>grab</button>
             </article>
