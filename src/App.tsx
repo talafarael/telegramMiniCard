@@ -74,7 +74,8 @@ function App() {
   const handlerSelectRolle = (data: string) => {
     setUser(data);
   };
-  const lp = useLaunchParams();
+  const lp = useLaunchParams(); 
+  const launchParams = retrieveLaunchParams();
   useEffect(() => {
     console.log("aa");
     if (
@@ -82,7 +83,7 @@ function App() {
       window.location.href.includes("tgWebAppData")
     ) {
       console.log("fuck");
-      const launchParams = retrieveLaunchParams();
+     
       if (launchParams?.initDataRaw) {
         setUser(launchParams.initDataRaw);
 
