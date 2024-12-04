@@ -96,12 +96,13 @@ function App() {
     if (user == "") return;
     const port = "wss://cardbec.onrender.com";
     const ws = new WebSocket(port);
+    console.log(lp.startParam);
     // const lp = useLaunchParams();
     wsRef.current = ws;
     ws.onopen = () => {
       const queryParameters = new URLSearchParams(window.location.search);
       // const queryParameters = new URLSearchParams(window.location.search);
-      const tokenRoom = lp.startParam?? queryParameters.get("token");
+      const tokenRoom = lp.startParam ?? queryParameters.get("token");
       const message = {
         action: "join",
         roomId: tokenRoom ? tokenRoom : undefined,
@@ -280,7 +281,7 @@ function App() {
   const handlerAdd = (card: ICard) => {
     console.log("AA");
     const queryParameters = new URLSearchParams(window.location.search);
-    const tokenRoom =lp.startParam ?? queryParameters.get("token");
+    const tokenRoom = lp.startParam ?? queryParameters.get("token");
 
     if (wsRef.current && dataYou && tokenRoom) {
       const message = {
