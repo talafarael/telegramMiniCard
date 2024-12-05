@@ -63,7 +63,7 @@ button {
   justify-content: center;
   height: 30vh;
   width: 100vw;
-  background: red;
+  /* background: red; */
 }
 
 .yourCardAfter,
@@ -110,5 +110,5 @@ header {
   justify-content: space-around;
 }
 .Opponent {
-  background: red;
+  /* background: red; */
 }
