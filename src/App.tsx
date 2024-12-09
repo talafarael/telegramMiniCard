@@ -165,7 +165,6 @@ function App() {
       ws.close();
     };
   }, [user]);
-
   const handlerStartGame = () => {
     const queryParameters = new URLSearchParams(window.location.search);
     const tokenRoom = queryParameters.get("token");
@@ -299,19 +298,6 @@ function App() {
     //start
     setCurrentCard(card);
   };
-  const handleDragStart = (e: React.DragEvent | React.TouchEvent, card: ICard) => {
-    e.preventDefault();
-    setCurrentCard(card);
-  };
-  
- 
- 
-  const touchEvents = {
-    onTouchStart: (e: React.TouchEvent, card: ICard) =>
-      handleDragStart(e, card),
-    onTouchMove: (e: React.TouchEvent) => handleDragOver(e),
-    onTouchEnd: (e: React.TouchEvent, card: ICard) => handleDrop(e, card),
-  };
   return (
     <div className="App">
       <header>
@@ -354,6 +340,10 @@ function App() {
               handleDropTable(e);
             }}
             className="table"
+            onTouchEnd={(e) => {
+              handleDropTable(e);
+              console.log("drop");
+            }}
           >
             <div>
               {trump ? (
@@ -371,6 +361,7 @@ function App() {
                 onDrop={(e) => {
                   handleDrop(e, elem.attack);
                 }}
+                onTouchEnd={(e) => handleDrop(e, elem.attack)}
                 className="tableCell"
               >
                 <img
@@ -399,12 +390,14 @@ function App() {
             return (
               <img
                 draggable={true}
-                {...touchEvents}
                 onDragStart={(e) => dragStartHandler(e, elem)}
                 onDragEnd={(e) => dragEndHandler(e)}
-                onTouchStart={(e) => dragStartHandler(e, elem)}
-                onTouchMove={(e) => e.preventDefault()} // Prevent touch move default behavior
-                onTouchEnd={(e) => dragEndHandler(e)}
+                onTouchStart={(e) => {
+                  console.log("AA");
+                  dragStartHandler(e, elem);
+                }}
+                // onTouchMove={(e) => e.preventDefault()} // Prevent touch move default behavior
+                // onTouchEnd={(e) => dragEndHandler(e)}
                 className={
                   key < yourCard.length / 2
                     ? "yourBeforeCard yourCard"
