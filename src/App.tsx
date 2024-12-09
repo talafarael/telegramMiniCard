@@ -265,7 +265,7 @@ function App() {
     }
   };
   const handleDrop = (e: React.DragEvent | React.TouchEvent, elem: ICard) => {
-    console.log(elem);
+    e.preventDefault()
     if (!currentCard) {
       return;
     }
@@ -361,7 +361,9 @@ function App() {
                 onDrop={(e) => {
                   handleDrop(e, elem.attack);
                 }}
-                onTouchEnd={(e) => handleDrop(e, elem.attack)}
+                onTouchEnd={(e) => {handleDrop(e, elem.attack)
+                  console.log("Suka")
+                }}
                 className="tableCell"
               >
                 <img
