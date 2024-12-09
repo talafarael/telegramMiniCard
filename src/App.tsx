@@ -237,16 +237,16 @@ function App() {
       wsRef.current.send(JSON.stringify(message));
     }
   };
-  const dragEndHandler = (e: React.DragEvent) => {};
-  const dragOverHandler = (e: React.DragEvent) => {
+  const dragEndHandler = (e: React.DragEvent| React.TouchEvent) => {};
+  const dragOverHandler = (e: React.DragEvent| React.TouchEvent) => {
     e.preventDefault();
   };
 
-  const dropHandler = (e: React.DragEvent, card: any) => {};
+  const dropHandler = (e: React.DragEvent| React.TouchEvent, card: any) => {};
   // Дропаем карту
 
   // Разрешаем сброс
-  const handleDragOver = (e: React.DragEvent) => {
+  const handleDragOver = (e: React.DragEvent| React.TouchEvent) => {
     e.preventDefault();
   };
   const handlerAdd = (card: ICard) => {
@@ -264,7 +264,7 @@ function App() {
       wsRef.current.send(JSON.stringify(message));
     }
   };
-  const handleDrop = (e: React.DragEvent, elem: ICard) => {
+  const handleDrop = (e: React.DragEvent| React.TouchEvent, elem: ICard) => {
     console.log(elem);
     if (!currentCard) {
       return;
@@ -281,7 +281,7 @@ function App() {
     // ? dataYou?.state == "attacking" && handlerAttack(elem)
     // : handlerAdd(elem);
   };
-  const handleDropTable = (e: React.DragEvent) => {
+  const handleDropTable = (e: React.DragEvent| React.TouchEvent) => {
     if (!currentCard) {
       return;
     }
@@ -291,7 +291,7 @@ function App() {
     }
     handlerAdd(currentCard);
   };
-  const dragStartHandler = (e: React.DragEvent, card: ICard) => {
+  const dragStartHandler = (e: React.DragEvent| React.TouchEvent, card: ICard) => {
     //start
     setCurrentCard(card);
   };
@@ -384,6 +384,9 @@ function App() {
                 draggable={true}
                 onDragStart={(e) => dragStartHandler(e, elem)}
                 onDragEnd={(e) => dragEndHandler(e)}
+                onTouchStart={(e) => dragStartHandler(e, elem)}
+                onTouchMove={(e) => e.preventDefault()} // Prevent touch move default behavior
+                onTouchEnd={(e) => dragEndHandler(e)}
                 className={
                   key < yourCard.length / 2
                     ? "yourBeforeCard yourCard"
