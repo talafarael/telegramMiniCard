@@ -399,7 +399,10 @@ function App() {
                 onDrop={(e) => {
                   handleDrop(e, elem.attack);
                 }}
-                onTouchEnd={(e) => handleDrop(e, elem.attack)}
+                onTouchEnd={(e) => {
+                  handleDropTable(e);
+                  e.preventDefault(); // Prevent default for touch end
+                }}
                 className="tableCell"
               >
                 <img
@@ -430,6 +433,7 @@ function App() {
                 draggable={true}
                 onDragStart={(e) => dragStartHandler(e, elem)}
                 onTouchStart={(e) => dragStartHandler(e, elem)}
+                onTouchMove={(e) => e.preventDefault()} // Prevent touch move default behavior
                 onTouchEnd={(e) => dragEndHandler(e)}
                 onDragEnd={(e) => dragEndHandler(e)}
                 className={
