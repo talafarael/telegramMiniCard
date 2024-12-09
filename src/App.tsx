@@ -266,8 +266,8 @@ function App() {
       wsRef.current.send(JSON.stringify(message));
     }
   };
-  const dragEndHandler = (e: React.DragEvent) => {};
-  const dragOverHandler = (e: React.DragEvent) => {
+  const dragEndHandler = (e: React.DragEvent| React.TouchEvent) => {};
+  const dragOverHandler = (e: React.DragEvent| React.TouchEvent) => {
     e.preventDefault();
   };
 
@@ -293,7 +293,25 @@ function App() {
       wsRef.current.send(JSON.stringify(message));
     }
   };
-  const handleDrop = (e: React.DragEvent, elem: ICard) => {
+  const handleTouchStart = (e: React.TouchEvent, card: ICard) => {
+    setCurrentCard(card);
+  };
+
+   const handleTouchEnd = (e: React.TouchEvent, card: ICard) => {
+    if (!currentCard) return;
+
+    // Обработка логики сброса карт
+    if (dataYou?.state === "defending") {
+      handlerDeff(currentCard, card);
+    } else if (table?.length === 0 && dataYou?.state === "attacking") {
+      handlerAttack(currentCard);
+    } else {
+      handlerAdd(currentCard);
+    }
+
+    setCurrentCard(undefined); // Сброс текущей карты
+  };
+  const handleDrop = (e: React.DragEvent| React.TouchEvent, elem: ICard) => {
     console.log(elem);
     if (!currentCard) {
       return;
@@ -302,15 +320,12 @@ function App() {
       handlerDeff(currentCard, elem);
     }
     if (table?.length == 0 && dataYou?.state == "attacking") {
-      // console.log("aaa")
       handlerAttack(currentCard);
     }
     handlerAdd(currentCard);
-    // : table?.length == 0
-    // ? dataYou?.state == "attacking" && handlerAttack(elem)
-    // : handlerAdd(elem);
+    
   };
-  const handleDropTable = (e: React.DragEvent) => {
+  const handleDropTable = (e: React.DragEvent| React.TouchEvent) => {
     if (!currentCard) {
       return;
     }
@@ -320,7 +335,7 @@ function App() {
     }
     handlerAdd(currentCard);
   };
-  const dragStartHandler = (e: React.DragEvent, card: ICard) => {
+  const dragStartHandler = (e: React.DragEvent| React.TouchEvent, card: ICard) => {
     //start
     setCurrentCard(card);
   };
@@ -365,6 +380,7 @@ function App() {
               console.log("aa");
               handleDropTable(e);
             }}
+            onTouchEnd={(e) => handleDropTable(e)}
             className="table"
           >
             <div>
@@ -383,6 +399,7 @@ function App() {
                 onDrop={(e) => {
                   handleDrop(e, elem.attack);
                 }}
+                onTouchEnd={(e) => handleDrop(e, elem.attack)}
                 className="tableCell"
               >
                 <img
@@ -412,6 +429,8 @@ function App() {
               <img
                 draggable={true}
                 onDragStart={(e) => dragStartHandler(e, elem)}
+                onTouchStart={(e) => dragStartHandler(e, elem)}
+                onTouchEnd={(e) => dragEndHandler(e)}
                 onDragEnd={(e) => dragEndHandler(e)}
                 className={
                   key < yourCard.length / 2
