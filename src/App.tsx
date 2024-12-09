@@ -165,6 +165,7 @@ function App() {
       ws.close();
     };
   }, [user]);
+
   const handlerStartGame = () => {
     const queryParameters = new URLSearchParams(window.location.search);
     const tokenRoom = queryParameters.get("token");
@@ -237,16 +238,16 @@ function App() {
       wsRef.current.send(JSON.stringify(message));
     }
   };
-  const dragEndHandler = (e: React.DragEvent| React.TouchEvent) => {};
-  const dragOverHandler = (e: React.DragEvent| React.TouchEvent) => {
+  const dragEndHandler = (e: React.DragEvent | React.TouchEvent) => {};
+  const dragOverHandler = (e: React.DragEvent | React.TouchEvent) => {
     e.preventDefault();
   };
 
-  const dropHandler = (e: React.DragEvent| React.TouchEvent, card: any) => {};
+  const dropHandler = (e: React.DragEvent | React.TouchEvent, card: any) => {};
   // Дропаем карту
 
   // Разрешаем сброс
-  const handleDragOver = (e: React.DragEvent| React.TouchEvent) => {
+  const handleDragOver = (e: React.DragEvent | React.TouchEvent) => {
     e.preventDefault();
   };
   const handlerAdd = (card: ICard) => {
@@ -264,7 +265,7 @@ function App() {
       wsRef.current.send(JSON.stringify(message));
     }
   };
-  const handleDrop = (e: React.DragEvent| React.TouchEvent, elem: ICard) => {
+  const handleDrop = (e: React.DragEvent | React.TouchEvent, elem: ICard) => {
     console.log(elem);
     if (!currentCard) {
       return;
@@ -281,7 +282,7 @@ function App() {
     // ? dataYou?.state == "attacking" && handlerAttack(elem)
     // : handlerAdd(elem);
   };
-  const handleDropTable = (e: React.DragEvent| React.TouchEvent) => {
+  const handleDropTable = (e: React.DragEvent | React.TouchEvent) => {
     if (!currentCard) {
       return;
     }
@@ -291,9 +292,25 @@ function App() {
     }
     handlerAdd(currentCard);
   };
-  const dragStartHandler = (e: React.DragEvent| React.TouchEvent, card: ICard) => {
+  const dragStartHandler = (
+    e: React.DragEvent | React.TouchEvent,
+    card: ICard
+  ) => {
     //start
     setCurrentCard(card);
+  };
+  const handleDragStart = (e: React.DragEvent | React.TouchEvent, card: ICard) => {
+    e.preventDefault();
+    setCurrentCard(card);
+  };
+  
+ 
+ 
+  const touchEvents = {
+    onTouchStart: (e: React.TouchEvent, card: ICard) =>
+      handleDragStart(e, card),
+    onTouchMove: (e: React.TouchEvent) => handleDragOver(e),
+    onTouchEnd: (e: React.TouchEvent, card: ICard) => handleDrop(e, card),
   };
   return (
     <div className="App">
@@ -382,6 +399,7 @@ function App() {
             return (
               <img
                 draggable={true}
+                {...touchEvents}
                 onDragStart={(e) => dragStartHandler(e, elem)}
                 onDragEnd={(e) => dragEndHandler(e)}
                 onTouchStart={(e) => dragStartHandler(e, elem)}
@@ -397,19 +415,17 @@ function App() {
               />
             );
           })}
-          <section className="sectionYou"> 
-        
-              <button
-                onClick={() => {
-                  handlerStartGame();
-                  console.log("Suk");
-                }}
-              >
-                start
-              </button>
-              
-           
-             <button onClick={handlerPass}>skip</button>  <button onClick={handlerGab}>grab</button>
+          <section className="sectionYou">
+            <button
+              onClick={() => {
+                handlerStartGame();
+                console.log("Suk");
+              }}
+            >
+              start
+            </button>
+            <button onClick={handlerPass}>skip</button>{" "}
+            <button onClick={handlerGab}>grab</button>
             {dataYou && (
               <div>
                 <h1>{dataYou?.user.firstName}</h1>
@@ -419,7 +435,6 @@ function App() {
               </div>
             )}
             {/* ddddddddd */}
-           
           </section>
         </article>
       </section>
