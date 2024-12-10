@@ -265,7 +265,7 @@ function App() {
     }
   };
   const handleDrop = (e: React.DragEvent | React.TouchEvent, elem: ICard) => {
-    e.preventDefault()
+    e.preventDefault();
     if (!currentCard) {
       return;
     }
@@ -297,6 +297,7 @@ function App() {
   ) => {
     //start
     setCurrentCard(card);
+    console.log(card);
   };
   return (
     <div className="App">
@@ -361,8 +362,9 @@ function App() {
                 onDrop={(e) => {
                   handleDrop(e, elem.attack);
                 }}
-                onTouchEnd={(e) => {handleDrop(e, elem.attack)
-                  console.log("Suka")
+                onTouchEnd={(e) => {
+                  handleDrop(e, elem.attack);
+                  console.log("Suka");
                 }}
                 className="tableCell"
               >
@@ -401,7 +403,12 @@ function App() {
                 // onTouchMove={(e) => e.preventDefault()} // Prevent touch move default behavior
                 // onTouchEnd={(e) => dragEndHandler(e)}
                 className={
-                  key < yourCard.length / 2
+                  currentCard?.rank == elem.rank &&
+                  currentCard?.suit == elem.suit
+                    ? key < yourCard.length / 2
+                      ? "yourBeforeCard yourCard yourCardActiveBefore"
+                      : "yourCardAfter yourCard yourCardActive"
+                    : key < yourCard.length / 2
                     ? "yourBeforeCard yourCard"
                     : "yourCardAfter yourCard"
                 }

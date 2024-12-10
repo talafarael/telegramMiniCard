@@ -39,8 +39,8 @@ button {
 }
 .cardOnTableDeffit {
   transition: transform 0.3s ease;
-  transform: rotate(20deg);
-  left: 40px;
+  transform: rotate(10deg);
+  left: 10px;
   z-index: 1;
   position: absolute;
   width: 90px;
@@ -72,13 +72,14 @@ button {
   position: relative;
 }
 .table {
+  
   position: relative;
   display: flex;
   flex-wrap: wrap;
   width: 100vw;
   height: 300px;
   align-items: center;
-
+gap: 20px;
   justify-content: center;
 }
 .sectionYou {
@@ -100,6 +101,7 @@ button {
   transform: rotate(45deg);
   height: 84px;
 }
+
 header {
   height: 5vh;
 }
@@ -111,4 +113,11 @@ header {
 }
 .Opponent {
   /* background: red; */
+}
+.yourCardActive {
+  transform: translateY(-50px) rotate(5deg);
+}
+.yourCardActiveBefore {
+  
+  transform: translateY(-50px) rotate(-5deg);
 }
