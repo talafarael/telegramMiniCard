@@ -225,7 +225,7 @@ function App() {
   return (
     <div className="App">
       <header>
-        {lp.startParam ? (
+        {!lp.startParam ? (
           <>
             {" "}
             <button
