@@ -266,8 +266,8 @@ function App() {
       wsRef.current.send(JSON.stringify(message));
     }
   };
-  const dragEndHandler = (e: React.DragEvent| React.TouchEvent) => {};
-  const dragOverHandler = (e: React.DragEvent| React.TouchEvent) => {
+  const dragEndHandler = (e: React.DragEvent | React.TouchEvent) => {};
+  const dragOverHandler = (e: React.DragEvent | React.TouchEvent) => {
     e.preventDefault();
   };
 
@@ -297,7 +297,7 @@ function App() {
     setCurrentCard(card);
   };
 
-   const handleTouchEnd = (e: React.TouchEvent, card: ICard) => {
+  const handleTouchEnd = (e: React.TouchEvent, card: ICard) => {
     if (!currentCard) return;
 
     // Обработка логики сброса карт
@@ -311,7 +311,7 @@ function App() {
 
     setCurrentCard(undefined); // Сброс текущей карты
   };
-  const handleDrop = (e: React.DragEvent| React.TouchEvent, elem: ICard) => {
+  const handleDrop = (e: React.DragEvent | React.TouchEvent, elem: ICard) => {
     console.log(elem);
     if (!currentCard) {
       return;
@@ -323,9 +323,8 @@ function App() {
       handlerAttack(currentCard);
     }
     handlerAdd(currentCard);
-    
   };
-  const handleDropTable = (e: React.DragEvent| React.TouchEvent) => {
+  const handleDropTable = (e: React.DragEvent | React.TouchEvent) => {
     if (!currentCard) {
       return;
     }
@@ -335,7 +334,10 @@ function App() {
     }
     handlerAdd(currentCard);
   };
-  const dragStartHandler = (e: React.DragEvent| React.TouchEvent, card: ICard) => {
+  const dragStartHandler = (
+    e: React.DragEvent | React.TouchEvent,
+    card: ICard
+  ) => {
     //start
     setCurrentCard(card);
   };
@@ -380,7 +382,10 @@ function App() {
               console.log("aa");
               handleDropTable(e);
             }}
-            onTouchEnd={(e) => handleDropTable(e)}
+            onTouchEnd={(e) => {
+              handleDropTable(e);
+              console.log("drop");
+            }}
             className="table"
           >
             <div>
@@ -400,8 +405,8 @@ function App() {
                   handleDrop(e, elem.attack);
                 }}
                 onTouchEnd={(e) => {
-                  handleDropTable(e);
-                  e.preventDefault(); // Prevent default for touch end
+                  handleDrop(e, elem.attack);
+                  console.log("Suka");
                 }}
                 className="tableCell"
               >
@@ -432,12 +437,20 @@ function App() {
               <img
                 draggable={true}
                 onDragStart={(e) => dragStartHandler(e, elem)}
-                onTouchStart={(e) => dragStartHandler(e, elem)}
-                onTouchMove={(e) => e.preventDefault()} // Prevent touch move default behavior
-                onTouchEnd={(e) => dragEndHandler(e)}
                 onDragEnd={(e) => dragEndHandler(e)}
+                onTouchStart={(e) => {
+                  console.log("AA");
+                  dragStartHandler(e, elem);
+                }}
+                // onTouchMove={(e) => e.preventDefault()} // Prevent touch move default behavior
+                // onTouchEnd={(e) => dragEndHandler(e)}
                 className={
-                  key < yourCard.length / 2
+                  currentCard?.rank == elem.rank &&
+                  currentCard?.suit == elem.suit
+                    ? key < yourCard.length / 2
+                      ? "yourBeforeCard yourCard yourCardActiveBefore"
+                      : "yourCardAfter yourCard yourCardActive"
+                    : key < yourCard.length / 2
                     ? "yourBeforeCard yourCard"
                     : "yourCardAfter yourCard"
                 }

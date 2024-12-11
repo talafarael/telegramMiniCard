@@ -108,3 +108,11 @@ header {
 .Opponent {
   /* background: red; */
 }
+
+.yourCardActive {
+  transform: translateY(-50px) rotate(5deg);
+}
+.yourCardActiveBefore {
+  
+  transform: translateY(-50px) rotate(-5deg);
+}
