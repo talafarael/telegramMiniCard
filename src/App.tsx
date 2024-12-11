@@ -1,56 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
-// import { useLaunchParams } from "@telegram-apps/sdk-react";
 import "./App.css";
-import { platform } from "os";
-import { start } from "repl";
 import {
   retrieveLaunchParams,
   useLaunchParams,
 } from "@telegram-apps/sdk-react";
-export interface IUser {
-  session: string;
-  hash: string;
-  allowsWriteToPm: boolean | null | undefined;
-  firstName: string | null;
-  id: number;
-  username: string | null | undefined;
-}
-export interface ICard {
-  rank: string;
-  suit: string;
-}
-export interface IPlayerPublisher {
-  id: number;
-  cardCount: number;
-  firstName: string | null;
-  startGame: boolean;
-  state: string;
-  passState: boolean;
-}
-export interface IYou {
-  user: IUser;
-  card: ICard[];
-  ws: WebSocket;
-  state: string;
-  startGameState: boolean;
-  passState: boolean;
-}
-export interface IResponse {
-  session: string;
-  action: string;
-  players: IPlayerPublisher[];
-  roomId: string;
-  you: IYou;
-  cardsOnTable: ITable[];
-  trump: ICard | null;
-  pass: ICard[];
-  passState: boolean;
-}
-export interface ITable {
-  attack: ICard;
-  deffit: ICard | null;
-}
-export {};
+import { ICard } from "./Type/Card";
+import { IPlayerPublisher } from "./Type/User/IPlayerPublisher";
+import { IYou } from "./Type/User/IYou";
+import { ITable } from "./Type/ITable";
+import { IResponse } from "./Type/IResponse";
 
 declare global {
   interface Window {
@@ -64,7 +22,6 @@ function App() {
   const [user, setUser] = useState<string>("");
   const [dataPalyers, setDataPlayers] = useState<IPlayerPublisher[] | []>([]);
   const [currentCard, setCurrentCard] = useState<ICard>();
-  const [count, setCount] = useState<number>(0);
   const [dataYou, setDataYou] = useState<IYou>();
   const [yourCard, setYourCard] = useState<ICard[]>([]);
   const [trump, setTrump] = useState<ICard | null>();
@@ -77,13 +34,10 @@ function App() {
   const lp = useLaunchParams();
   const launchParams = retrieveLaunchParams();
   useEffect(() => {
-    console.log("aa");
     if (
       typeof window !== "undefined" &&
       window.location.href.includes("tgWebAppData")
     ) {
-      console.log("fuck");
-
       if (launchParams?.initDataRaw) {
         setUser(launchParams.initDataRaw);
 
@@ -92,20 +46,18 @@ function App() {
     }
   });
   //t.me/@CardFaraBot
-  https: useEffect(() => {
+  useEffect(() => {
     if (user == "") return;
     const port = "wss://cardbec.onrender.com";
     const ws = new WebSocket(port);
     console.log(lp.startParam);
-    // const lp = useLaunchParams();
     wsRef.current = ws;
     ws.onopen = () => {
       const queryParameters = new URLSearchParams(window.location.search);
-      // const queryParameters = new URLSearchParams(window.location.search);
       const tokenRoom = lp.startParam ?? queryParameters.get("token");
       const message = {
         action: "join",
-        roomId: tokenRoom ? tokenRoom : undefined,
+        roomId: tokenRoom ?? undefined,
         userData: user,
       };
       ws.send(JSON.stringify(message));
@@ -125,66 +77,14 @@ function App() {
           setTable(res.cardsOnTable);
           break;
         }
-        case "UserReady": {
-          setYourCard(res.you.card);
-          setDataPlayers(res.players);
-          setDataYou(res.you);
-          setTrump(res.trump);
-          setTable(res.cardsOnTable);
-          break;
-        }
-        case "startGame": {
-          setYourCard(res.you.card);
-          setDataYou(res.you);
-          setDataPlayers(res.players);
-          setStartGame(true);
-          setTrump(res.trump);
-          setTable(res.cardsOnTable);
-          break;
-        }
-        case "attack": {
-          setYourCard(res.you.card);
-          setDataYou(res.you);
-          setDataPlayers(res.players);
-          setStartGame(true);
-          setTrump(res.trump);
-          setTable(res.cardsOnTable);
-          break;
-        }
-        case "def": {
-          setYourCard(res.you.card);
-          setDataYou(res.you);
-          setDataPlayers(res.players);
-          setStartGame(true);
-          setTrump(res.trump);
-          setTable(res.cardsOnTable);
-          break;
-        }
-        case "pass": {
-          setYourCard(res.you.card);
-          setDataYou(res.you);
-          setDataPlayers(res.players);
-          setStartGame(true);
-          setTrump(res.trump);
-          setTable(res.cardsOnTable);
-          break;
-        }
-        case "nextMove": {
-          setYourCard(res.you.card);
-          setDataYou(res.you);
-          setDataPlayers(res.players);
-          setStartGame(true);
-          setTrump(res.trump);
-          setTable(res.cardsOnTable);
-          break;
-        }
+        case "UserReady":
+        case "startGame":
+        case "attack":
+        case "def":
+        case "pass":
+        case "nextMove":
         case "grab": {
-          setYourCard(res.you.card);
-          setDataYou(res.you);
-          setDataPlayers(res.players);
-          setStartGame(true);
-          setTrump(res.trump);
-          setTable(res.cardsOnTable);
+          setStateGame(res);
           break;
         }
       }
@@ -196,6 +96,15 @@ function App() {
       ws.close();
     };
   }, [user]);
+  function setStateGame(res: IResponse) {
+    setYourCard(res.you.card);
+    setDataYou(res.you);
+    setDataPlayers(res.players);
+    setStartGame(true);
+    setTrump(res.trump);
+    setTable(res.cardsOnTable);
+  }
+
   const handleStartGame = () => {
     const queryParameters = new URLSearchParams(window.location.search);
     const tokenRoom = lp.startParam ?? queryParameters.get("token");
@@ -209,7 +118,6 @@ function App() {
     }
   };
   const handlerAttack = (card: ICard) => {
-    console.log("AA");
     const queryParameters = new URLSearchParams(window.location.search);
     const tokenRoom = lp.startParam ?? queryParameters.get("token");
 
@@ -237,10 +145,7 @@ function App() {
       wsRef.current.send(JSON.stringify(message));
     }
   };
-  // const lp = useLaunchParams();
-  // console.log(JSON.stringify(lp));
   const handlerPass = () => {
-    console.log("AA");
     const queryParameters = new URLSearchParams(window.location.search);
     const tokenRoom = lp.startParam ?? queryParameters.get("token");
 
@@ -266,18 +171,7 @@ function App() {
       wsRef.current.send(JSON.stringify(message));
     }
   };
-  const dragEndHandler = (e: React.DragEvent | React.TouchEvent) => {};
-  const dragOverHandler = (e: React.DragEvent | React.TouchEvent) => {
-    e.preventDefault();
-  };
 
-  const dropHandler = (e: React.DragEvent, card: any) => {};
-  // Дропаем карту
-
-  // Разрешаем сброс
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-  };
   const handlerAdd = (card: ICard) => {
     console.log("AA");
     const queryParameters = new URLSearchParams(window.location.search);
@@ -293,24 +187,7 @@ function App() {
       wsRef.current.send(JSON.stringify(message));
     }
   };
-  const handleTouchStart = (e: React.TouchEvent, card: ICard) => {
-    setCurrentCard(card);
-  };
 
-  const handleTouchEnd = (e: React.TouchEvent, card: ICard) => {
-    if (!currentCard) return;
-
-    // Обработка логики сброса карт
-    if (dataYou?.state === "defending") {
-      handlerDeff(currentCard, card);
-    } else if (table?.length === 0 && dataYou?.state === "attacking") {
-      handlerAttack(currentCard);
-    } else {
-      handlerAdd(currentCard);
-    }
-
-    setCurrentCard(undefined); // Сброс текущей карты
-  };
   const handleDrop = (e: React.DragEvent | React.TouchEvent, elem: ICard) => {
     console.log(elem);
     if (!currentCard) {
@@ -338,37 +215,45 @@ function App() {
     e: React.DragEvent | React.TouchEvent,
     card: ICard
   ) => {
-    //start
     setCurrentCard(card);
   };
+  const dragEndHandler = (e: React.DragEvent | React.TouchEvent) => {};
+  const dragOverHandler = (e: React.DragEvent | React.TouchEvent) => {
+    e.preventDefault();
+  };
+
   return (
     <div className="App">
       <header>
-        <button
-          onClick={() => {
-            handlerSelectRolle(
-              "AAHdF6IQAAAAAN0XohDhrOrc&user=%7B%22id%22%3A1%2C%22first_name%22%3A%22Test%22%2C%22last_name%22%3A%22Testenko%22%2C%22username%22%3A%22tst%22%2C%22language_code%22%3A%22ru%22%2C%22is_premium%22%3Atrue%7D&auth_date=1662771648&hash=c501b71e775f74ce10e377dea85a7ea24ecd640b223ea86dfe453e0eaed2e2b2"
-            );
-          }}
-        >
-          user1
-        </button>
-
-        <button
-          onClick={() => {
-            handlerSelectRolle(
-              "user=%7B%22id%22%3A1056119921%2C%22first_name%22%3A%22farael%22%2C%22last_name%22%3A%22%22%2C%22username%22%3A%22shinerfa%22%2C%22language_code%22%3A%22uk%22%2C%22allows_write_to_pm%22%3Atrue%7D&chat_instance=948078213344090422&chat_type=sender&auth_date=1731334219&hash=d75e77e0a3702152c2845498d621771eedd66724db2a23efeb4d99f0012f3e85"
-            );
-          }}
-        >
-          user2
-        </button>
+        {lp.startParam ? (
+          <>
+            {" "}
+            <button
+              onClick={() => {
+                handlerSelectRolle(
+                  "AAHdF6IQAAAAAN0XohDhrOrc&user=%7B%22id%22%3A1%2C%22first_name%22%3A%22Test%22%2C%22last_name%22%3A%22Testenko%22%2C%22username%22%3A%22tst%22%2C%22language_code%22%3A%22ru%22%2C%22is_premium%22%3Atrue%7D&auth_date=1662771648&hash=c501b71e775f74ce10e377dea85a7ea24ecd640b223ea86dfe453e0eaed2e2b2"
+                );
+              }}
+            >
+              user1
+            </button>
+            <button
+              onClick={() => {
+                handlerSelectRolle(
+                  "user=%7B%22id%22%3A1056119921%2C%22first_name%22%3A%22farael%22%2C%22last_name%22%3A%22%22%2C%22username%22%3A%22shinerfa%22%2C%22language_code%22%3A%22uk%22%2C%22allows_write_to_pm%22%3Atrue%7D&chat_instance=948078213344090422&chat_type=sender&auth_date=1731334219&hash=d75e77e0a3702152c2845498d621771eedd66724db2a23efeb4d99f0012f3e85"
+                );
+              }}
+            >
+              user2
+            </button>
+          </>
+        ) : null}
       </header>
       <section className="gameSection">
         <article className="gameTopBoard">
           <div className="yourOpponents">
             {dataPalyers.map((elem) => (
-              <div className="Opponent">
+              <div className="Opponent" key={elem.id}>
                 <h1>{elem.firstName}</h1>
                 <p>{elem.state}</p>
                 <h1>{elem.startGame ? "ready" : "dont read"}</h1>
@@ -379,12 +264,10 @@ function App() {
           <div
             onDragOver={(e) => dragOverHandler(e)}
             onDrop={(e) => {
-              console.log("aa");
               handleDropTable(e);
             }}
             onTouchEnd={(e) => {
               handleDropTable(e);
-              console.log("drop");
             }}
             className="table"
           >
@@ -406,7 +289,6 @@ function App() {
                 }}
                 onTouchEnd={(e) => {
                   handleDrop(e, elem.attack);
-                  console.log("Suka");
                 }}
                 className="tableCell"
               >
