@@ -9,6 +9,7 @@ import { IPlayerPublisher } from "./Type/User/IPlayerPublisher";
 import { IYou } from "./Type/User/IYou";
 import { ITable } from "./Type/ITable";
 import { IResponse } from "./Type/IResponse";
+import { AuthWeb } from "./components/AuthWeb";
 
 declare global {
   interface Window {
@@ -230,7 +231,8 @@ function App() {
     <div className="App">
       <header>
         {typeof window !== "undefined" &&
-          window.location.href.includes("tgWebAppData") ? <AuthTg setLaunchParams={setLaunchParams} setLp={setLp} /> : null
+          window.location.href.includes("tgWebAppData") ? <AuthTg setLaunchParams={setLaunchParams} setLp={setLp} /> :
+          <AuthWeb />
 
         }
         {!lp.startParam ? (
