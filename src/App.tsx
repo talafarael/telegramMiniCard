@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./App.css";
-import {
-  retrieveLaunchParams,
-  useLaunchParams,
-} from "@telegram-apps/sdk-react";
+import { AuthTg } from "./components/AuthTg";
+
+
+
 import { ICard } from "./Type/Card";
 import { IPlayerPublisher } from "./Type/User/IPlayerPublisher";
 import { IYou } from "./Type/User/IYou";
@@ -27,12 +27,16 @@ function App() {
   const [trump, setTrump] = useState<ICard | null>();
   const [startGame, setStartGame] = useState<boolean>(false);
   const [table, setTable] = useState<ITable[] | null>();
+  const [launchParams, setLaunchParams] = useState({
+    initDataRaw: ""
+  })
+  const [lp, setLp] = useState({
+    startParam: ""
+  })
   const wsRef = useRef<WebSocket | null>(null);
   const handlerSelectRolle = (data: string) => {
     setUser(data);
   };
-  const lp = useLaunchParams();
-  const launchParams = retrieveLaunchParams();
   useEffect(() => {
     if (
       typeof window !== "undefined" &&
@@ -217,7 +221,7 @@ function App() {
   ) => {
     setCurrentCard(card);
   };
-  const dragEndHandler = (e: React.DragEvent | React.TouchEvent) => {};
+  const dragEndHandler = (e: React.DragEvent | React.TouchEvent) => { };
   const dragOverHandler = (e: React.DragEvent | React.TouchEvent) => {
     e.preventDefault();
   };
@@ -225,6 +229,10 @@ function App() {
   return (
     <div className="App">
       <header>
+        {typeof window !== "undefined" &&
+          window.location.href.includes("tgWebAppData") ? <AuthTg setLaunchParams={setLaunchParams} setLp={setLp} /> : null
+
+        }
         {!lp.startParam ? (
           <>
             {" "}
@@ -294,17 +302,15 @@ function App() {
               >
                 <img
                   className="cardOnTableAttack"
-                  src={`/${elem.attack.suit}/${
-                    elem.attack.rank + elem.attack.suit
-                  }.svg`}
+                  src={`/${elem.attack.suit}/${elem.attack.rank + elem.attack.suit
+                    }.svg`}
                   alt=""
                 />
                 {elem.deffit && (
                   <img
                     className="cardOnTableDeffit"
-                    src={`/${elem.deffit.suit}/${
-                      elem.deffit.rank + elem.deffit.suit
-                    }.svg`}
+                    src={`/${elem.deffit.suit}/${elem.deffit.rank + elem.deffit.suit
+                      }.svg`}
                     alt=""
                   />
                 )}
@@ -328,13 +334,13 @@ function App() {
                 // onTouchEnd={(e) => dragEndHandler(e)}
                 className={
                   currentCard?.rank == elem.rank &&
-                  currentCard?.suit == elem.suit
+                    currentCard?.suit == elem.suit
                     ? key < yourCard.length / 2
                       ? "yourBeforeCard yourCard yourCardActiveBefore"
                       : "yourCardAfter yourCard yourCardActive"
                     : key < yourCard.length / 2
-                    ? "yourBeforeCard yourCard"
-                    : "yourCardAfter yourCard"
+                      ? "yourBeforeCard yourCard"
+                      : "yourCardAfter yourCard"
                 }
                 src={`/${elem.suit}/${elem.rank + elem.suit}.svg`}
                 alt=""
