@@ -48,7 +48,7 @@ function App() {
         console.log(lp.startParam);
       }
     }
-  });
+  }, [launchParams]);
   //t.me/@CardFaraBot
   useEffect(() => {
     if (user == "") return;
