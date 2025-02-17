@@ -10,6 +10,7 @@ import { IYou } from "./Type/User/IYou";
 import { ITable } from "./Type/ITable";
 import { IResponse } from "./Type/IResponse";
 import { AuthWeb } from "./components/AuthWeb";
+import { IUserTg } from "./Type/IUserTg";
 
 declare global {
   interface Window {
@@ -24,6 +25,7 @@ function App() {
   const [dataPalyers, setDataPlayers] = useState<IPlayerPublisher[] | []>([]);
   const [currentCard, setCurrentCard] = useState<ICard>();
   const [dataYou, setDataYou] = useState<IYou>();
+  const [webUser, setWebUser] = useState<IUserTg | undefined>()
   const [yourCard, setYourCard] = useState<ICard[]>([]);
   const [trump, setTrump] = useState<ICard | null>();
   const [startGame, setStartGame] = useState<boolean>(false);
@@ -52,7 +54,6 @@ function App() {
   }, [launchParams]);
   //t.me/@CardFaraBot
   useEffect(() => {
-    if (user == "") return;
     const port = "wss://cardbec.onrender.com";
     const ws = new WebSocket(port);
     console.log(lp.startParam);
@@ -63,7 +64,7 @@ function App() {
       const message = {
         action: "join",
         roomId: tokenRoom ?? undefined,
-        userData: user,
+        userData: user == "" ? webUser : user,
       };
       ws.send(JSON.stringify(message));
     };
@@ -100,7 +101,7 @@ function App() {
     return () => {
       ws.close();
     };
-  }, [user]);
+  }, [user, webUser]);
   function setStateGame(res: IResponse) {
     setYourCard(res.you.card);
     setDataYou(res.you);
@@ -232,7 +233,7 @@ function App() {
       <header>
         {typeof window !== "undefined" &&
           window.location.href.includes("tgWebAppData") ? <AuthTg setLaunchParams={setLaunchParams} setLp={setLp} /> :
-          <AuthWeb />
+          <AuthWeb setWebUser={setWebUser} />
 
         }
         {!lp.startParam ? (
