@@ -1,7 +1,7 @@
 export interface IUserTg {
   hash: string;
   user: {
-    photoUrl?: string;
+    photo_url?: string;
     id: number;
     allowsWriteToPm: boolean;
     username: string;
