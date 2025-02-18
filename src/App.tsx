@@ -33,9 +33,7 @@ function App() {
   const [launchParams, setLaunchParams] = useState({
     initDataRaw: ""
   })
-  const [lp, setLp] = useState({
-    startParam: ""
-  })
+  const [lp, setLp] = useState({ startParam: "" })
   const wsRef = useRef<WebSocket | null>(null);
   const handlerSelectRolle = (data: string) => {
     setUser(data);
@@ -48,7 +46,6 @@ function App() {
       if (launchParams?.initDataRaw) {
         setUser(launchParams.initDataRaw);
 
-        console.log(lp.startParam);
       }
     }
   }, [launchParams]);
@@ -56,11 +53,10 @@ function App() {
   useEffect(() => {
     const port = "wss://cardbec.onrender.com";
     const ws = new WebSocket(port);
-    console.log(lp.startParam);
     wsRef.current = ws;
     ws.onopen = () => {
       const queryParameters = new URLSearchParams(window.location.search);
-      const tokenRoom = lp.startParam ?? queryParameters.get("token");
+      const tokenRoom = lp.startParam == "" ? queryParameters.get("token") : lp?.startParam
       const message = {
         action: "join",
         roomId: tokenRoom ?? undefined,
