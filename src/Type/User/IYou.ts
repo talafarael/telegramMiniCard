@@ -8,4 +8,5 @@ export interface IYou {
   state: string;
   startGameState: boolean;
   passState: boolean;
+  photoUrl: string
 }

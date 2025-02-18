@@ -116,3 +116,14 @@ header {
   
   transform: translateY(-50px) rotate(-5deg);
 }
+.opponentIcon{
+height:40px;
+width: 40px;
+border-radius:50px;
+}
+.yourIcon{
+height:50px;
+width: 50px;
+border-radius:50px;
+}
+

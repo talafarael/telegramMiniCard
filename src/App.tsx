@@ -54,6 +54,9 @@ function App() {
     const port = "wss://cardbec.onrender.com";
     const ws = new WebSocket(port);
     wsRef.current = ws;
+    if (!webUser && user == "") {
+      return;
+    }
     ws.onopen = () => {
       const queryParameters = new URLSearchParams(window.location.search);
       const tokenRoom = lp.startParam == "" ? queryParameters.get("token") : lp?.startParam
@@ -229,8 +232,7 @@ function App() {
       <header>
         {typeof window !== "undefined" &&
           window.location.href.includes("tgWebAppData") ? <AuthTg setLaunchParams={setLaunchParams} setLp={setLp} /> :
-          <AuthWeb setWebUser={setWebUser} />
-
+          webUser ? <AuthWeb setWebUser={setWebUser} /> : null
         }
         {!lp.startParam ? (
           <>
@@ -348,8 +350,17 @@ function App() {
           })}
           <section className="sectionYou">
             {dataYou && (
+              <img src={dataYou.photoUrl} alt="" className="yourIcon" />
+            )}
+
+            {dataYou && (
+
               <div>
+
+
+
                 <h1>{dataYou?.user.firstName}</h1>
+
                 <p>{dataYou.state}</p>
                 <h1>{dataYou?.startGameState ? "ready" : "dont read"}</h1>
                 <p>pass: {dataYou?.passState ? "pass" : "dont pass"}</p>

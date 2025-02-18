@@ -9,6 +9,7 @@ export const AuthWeb: React.FC<IAuthWeb> = ({ setWebUser }) => {
     <LoginButton
       botUsername="talafarelBot"
       onAuthCallback={(data) => {
+        console.log(data)
         setWebUser({
           hash: data.hash,
           user: {

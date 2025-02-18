@@ -5,4 +5,5 @@ export interface IPlayerPublisher {
   startGame: boolean;
   state: string;
   passState: boolean;
+  photoUrl: string
 }
