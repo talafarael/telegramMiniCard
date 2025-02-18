@@ -232,7 +232,7 @@ function App() {
       <header>
         {typeof window !== "undefined" &&
           window.location.href.includes("tgWebAppData") ? <AuthTg setLaunchParams={setLaunchParams} setLp={setLp} /> :
-          webUser ? <AuthWeb setWebUser={setWebUser} /> : null
+          <AuthWeb setWebUser={setWebUser} />
         }
         {!lp.startParam ? (
           <>
@@ -263,6 +263,7 @@ function App() {
           <div className="yourOpponents">
             {dataPalyers.map((elem) => (
               <div className="Opponent" key={elem.id}>
+                <img src={elem.photoUrl} className="opponentIcon" alt="" />
                 <h1>{elem.firstName}</h1>
                 <p>{elem.state}</p>
                 <h1>{elem.startGame ? "ready" : "dont read"}</h1>
